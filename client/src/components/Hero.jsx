@@ -32,7 +32,7 @@ export default function Hero() {
               <span className="text-[#30BFDD]">HACK</span> AND <span className="text-[#30BFDD]">VIZ</span> 2.0
             </h1>
             <p className="text-xl md:text-2xl font-light mb-6">
-              A 24-hour hackathon & Data Visualization competition
+              A 30-hour hackathon & Data Visualization competition
             </p>
             <p className="text-lg md:text-xl mb-8">
               Join us for an unforgettable experience of coding, collaboration, and creativity at GLA University.
