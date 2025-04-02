@@ -39,7 +39,7 @@ export default function About() {
               What is <span className="text-[#30BFDD]">Hack and Viz 2.0</span>?
             </h3>
             <p className="text-lg mb-6">
-              Hack and Viz 2.0 is a 24-hour hackathon organized by the Datum
+              Hack and Viz 2.0 is a 30-hour hackathon organized by the Datum
               Club of GLA University. It brings together student developers,
               designers, and innovators to collaborate on projects addressing
               real-world challenges.
@@ -205,7 +205,7 @@ export default function About() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  24 Hours
+                  30 Hours
                 </span>
               </div>
               <h3 className="text-2xl font-bold mb-4">
@@ -214,7 +214,7 @@ export default function About() {
               <p className="text-lg mb-6">
                 Our flagship competition where teams of 3-4 participants work on
                 innovative solutions to real-world problems. Develop your
-                project from concept to prototype in just 24 hours!
+                project from concept to prototype in just 30 hours!
               </p>
 
               <div className="space-y-5 mb-8">
@@ -271,7 +271,7 @@ export default function About() {
                   <div>
                     <h4 className="font-medium">Resources Provided</h4>
                     <p className="text-gray-600">
-                      Workspace, high-speed internet, meals, beverages, and
+                      Workspace, high-speed internet, beverages, and
                       mentorship
                     </p>
                   </div>
@@ -286,10 +286,10 @@ export default function About() {
                   </div>
                   <div>
                     <h5 className="font-medium text-lg">
-                      Initial Round: 24-Hour Coding Challenge
+                      Initial Round: 30-Hour Coding Challenge
                     </h5>
                     <p className="text-gray-600">
-                      Teams will have 24 hours to develop a functional prototype
+                      Teams will have 30 hours to develop a functional prototype
                       based on the chosen problem statement. Participants will
                       have access to mentors throughout this period.
                     </p>
@@ -343,7 +343,7 @@ export default function About() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
                   <p className="text-white p-4 font-medium">
-                    Collaborative workspace setup for 24-hour coding
+                    Collaborative workspace setup for 30-hour coding
                   </p>
                 </div>
               </div>

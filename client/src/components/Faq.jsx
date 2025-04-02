@@ -10,7 +10,7 @@ export default function Faq() {
   const faqItems = [
     {
       question: "Who can participate?",
-      answer: "Hack and Viz 2.0 is open to GLA universuty students f. You don't need to be a computer science student - we welcome participants from all disciplines!"
+      answer: "Hack and Viz 2.0 is open to GLA universuty students . You don't need to be a computer science student - we welcome participants from all disciplines!"
     },
     {
       question: "Is there a registration fee?",

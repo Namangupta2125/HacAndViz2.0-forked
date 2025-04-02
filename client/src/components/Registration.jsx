@@ -22,7 +22,7 @@ export default function Registration() {
                 </svg>
                 <div>
                   <h4 className="font-medium mb-1">Learn & Build</h4>
-                  <p className="text-sm text-gray-300">Gain hands-on experience building real projects in just 24 hours</p>
+                  <p className="text-sm text-gray-300">Gain hands-on experience building real projects in just 30 hours</p>
                 </div>
               </div>
               <div className="flex items-start">
