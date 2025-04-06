@@ -40,6 +40,7 @@ const supabase = createClient(
   "https://bblzcyijscfszivrlyih.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJibHpjeWlqc2Nmc3ppdnJseWloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1ODExMTEsImV4cCI6MjA1OTE1NzExMX0.RqmAtrdhLPuZ3mgsBECNlOIERBz6AI5A9szSdvRvNoI"
 );
+
 const teamMemberSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   universityRollNumber: z
@@ -66,7 +67,7 @@ const teamMemberSchema = z.object({
 
 const registerSchema = z.object({
   teamName: z.string().min(2, { message: "Team name is required" }),
-  teamSize: z.enum(["2", "3", "4"], {
+  teamSize: z.enum(["1", "2", "3", "4"], {
     required_error: "Please select team size",
   }),
   paymentProof: z.any().refine((file) => file && file instanceof File, {
@@ -74,7 +75,7 @@ const registerSchema = z.object({
   }),
   teamMembers: z
     .array(teamMemberSchema)
-    .min(2, { message: "Minimum 2 team members required" })
+    .min(1, { message: "Minimum 1 team member required" })
     .max(4, { message: "Maximum 4 team members allowed" }),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
@@ -91,21 +92,9 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       teamName: "",
-      teamSize: "2",
+      teamSize: "1",
       paymentProof: undefined,
       teamMembers: [
-        {
-          name: "",
-          universityRollNumber: "",
-          mobileNo: "",
-          email: "",
-          course: "",
-          yearOfStudy: "1",
-          classSection: "",
-          otherSection: "",
-          accommodationType: "Day Scholar",
-          hostelName: "",
-        },
         {
           name: "",
           universityRollNumber: "",
@@ -302,13 +291,12 @@ export default function Register() {
                   <p>🎓 Eligibility: Open to 1st - 3rd Year students</p>
                   <p className="font-medium">👥 Team Composition:</p>
                   <ul className="list-disc pl-6 space-y-1">
-                    <li>Minimum 2 and maximum 4 members per team</li>
+                    <li>Minimum 1 and maximum 4 members per team</li>
                     <li>
-                      Recommended to have at least one student from each year
+                      For teams with 2+ members, recommended to have at least one student from each year
                     </li>
                     <li>
-                      Payment will be teamwise (Rs. 100 per team member - 200 Rs
-                      (for team of 2), 300 Rs (for team of 3) and 400 Rs. (for team of 4)
+                      Payment will be teamwise (Rs. 100 per team member - 100 Rs (solo), 200 Rs (for team of 2), 300 Rs (for team of 3) and 400 Rs. (for team of 4)
                     </li>
                   </ul>
                   <p className="font-medium mt-2">Important Dates:</p>
@@ -387,13 +375,14 @@ export default function Register() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
+                              <SelectItem value="1">1 Member (Solo)</SelectItem>
                               <SelectItem value="2">2 Members</SelectItem>
                               <SelectItem value="3">3 Members</SelectItem>
                               <SelectItem value="4">4 Members</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Team of 2: ₹200 | Team of 3: ₹300 | Team of 4: ₹400
+                            Solo: ₹100 | Team of 2: ₹200 | Team of 3: ₹300 | Team of 4: ₹400
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -439,13 +428,13 @@ export default function Register() {
                 {/* Team Members Information */}
                 <div className="space-y-6">
                   <h3 className="text-xl font-medium mb-4 pb-2 border-b">
-                    Team Members Information
+                    {parseInt(teamSize) === 1 ? "Participant Information" : "Team Members Information"}
                   </h3>
 
                   {fields.map((field, index) => (
                     <div key={field.id} className="border rounded-lg p-4">
                       <h4 className="font-medium text-lg mb-4">
-                        Team Member {index + 1}
+                        {parseInt(teamSize) === 1 ? "Participant Details" : `Team Member ${index + 1}`}
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
