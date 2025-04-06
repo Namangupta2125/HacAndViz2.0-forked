@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -66,7 +66,7 @@ const teamMemberSchema = z.object({
 
 const registerSchema = z.object({
   teamName: z.string().min(2, { message: "Team name is required" }),
-  teamSize: z.enum(["3", "4"], {
+  teamSize: z.enum(["2", "3", "4"], {
     required_error: "Please select team size",
   }),
   paymentProof: z.any().refine((file) => file && file instanceof File, {
@@ -74,7 +74,7 @@ const registerSchema = z.object({
   }),
   teamMembers: z
     .array(teamMemberSchema)
-    .min(3, { message: "Minimum 3 team members required" })
+    .min(2, { message: "Minimum 2 team members required" })
     .max(4, { message: "Maximum 4 team members allowed" }),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
@@ -91,21 +91,9 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       teamName: "",
-      teamSize: "3",
+      teamSize: "2",
       paymentProof: undefined,
       teamMembers: [
-        {
-          name: "",
-          universityRollNumber: "",
-          mobileNo: "",
-          email: "",
-          course: "",
-          yearOfStudy: "1",
-          classSection: "",
-          otherSection: "",
-          accommodationType: "Day Scholar",
-          hostelName: "",
-        },
         {
           name: "",
           universityRollNumber: "",
@@ -142,8 +130,8 @@ export default function Register() {
 
   // Update team member fields when team size changes
   const teamSize = form.watch("teamSize");
-
-  React.useEffect(() => {
+  
+  useEffect(() => {
     const currentLength = fields.length;
     const targetLength = parseInt(teamSize);
 
@@ -164,12 +152,12 @@ export default function Register() {
         });
       }
     } else if (currentLength > targetLength) {
-      // Remove fields
+      // Remove fields from the end
       for (let i = currentLength - 1; i >= targetLength; i--) {
         remove(i);
       }
     }
-  }, [teamSize, fields.length, append, remove]);
+  }, [teamSize, append, remove, fields.length]);
 
   const handlePaymentImageChange = (e) => {
     const file = e.target.files[0];
@@ -289,7 +277,7 @@ export default function Register() {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      <div className="flex-1 container mx-auto px-4 py-12">
+      <div className="flex-1 container mx-auto px-4 py-20">
         <Card className="max-w-4xl mx-auto">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold mb-2">
@@ -314,13 +302,13 @@ export default function Register() {
                   <p>🎓 Eligibility: Open to 1st - 3rd Year students</p>
                   <p className="font-medium">👥 Team Composition:</p>
                   <ul className="list-disc pl-6 space-y-1">
-                    <li>Minimum 3 and maximum 4 members per team</li>
+                    <li>Minimum 2 and maximum 4 members per team</li>
                     <li>
                       Recommended to have at least one student from each year
                     </li>
                     <li>
-                      Payment will be teamwise (Rs. 100 per team member - 300 Rs
-                      (for team of 3) and 400 Rs. (for team of 4)
+                      Payment will be teamwise (Rs. 100 per team member - 200 Rs
+                      (for team of 2), 300 Rs (for team of 3) and 400 Rs. (for team of 4)
                     </li>
                   </ul>
                   <p className="font-medium mt-2">Important Dates:</p>
@@ -399,12 +387,13 @@ export default function Register() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
+                              <SelectItem value="2">2 Members</SelectItem>
                               <SelectItem value="3">3 Members</SelectItem>
                               <SelectItem value="4">4 Members</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Team of 3: ₹300 | Team of 4: ₹400
+                            Team of 2: ₹200 | Team of 3: ₹300 | Team of 4: ₹400
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
