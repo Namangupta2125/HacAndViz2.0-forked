@@ -23,6 +23,7 @@ import {
   Eye,
   Monitor,
 } from "lucide-react";
+import anti from "../../../attached_assets/IMG-20250411-WA0006.jpg";
 
 const ThemeCard = ({
   title,
@@ -31,8 +32,26 @@ const ThemeCard = ({
   examples,
   challenge,
   criteria,
+  imageIndex,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // Image URLs for theme cards
+  const backgroundImages = [
+    "https://i.pinimg.com/736x/a1/11/d2/a111d298d5f257bca6f0e8b5eeb76b96.jpg", // Schrödinger's Hackathon
+    "https://static.vecteezy.com/system/resources/previews/017/156/302/non_2x/cyber-safety-cyber-security-and-privacy-concept-man-holding-online-protection-shield-as-symbol-of-defense-and-secure-person-defending-and-protecting-data-illustration-vector.jpg", // The Anti-Hack
+    "https://img.freepik.com/free-photo/illustration-geometric-shapes-with-colorful-neon-laser-lights-perfect-backgrounds_181624-34429.jpg", // The Paradox Hack
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMpGlyXPCoijOVhlqHuLF6CeWOKzVbJ4i_cA&s", // The Black Mirror Hack
+    "https://img.freepik.com/free-vector/gradient-numerology-background_23-2150011413.jpg", // The 5th Dimension Hack
+    "https://img.freepik.com/premium-vector/hands-with-transport-card-smartphone-smartwatch-bank-card-near-pos-terminal-wireless-contactless-cashless-payments-rfid-nfc-vector-illustration-flat-style_169241-3899.jpg", // The Invisible Economy Challenge
+    "https://media.istockphoto.com/id/1390783215/photo/faceless-hooded-hacker-showing-silence-gesture-cyber-attack-system-breaking-and-malware.jpg?s=612x612&w=0&k=20&c=_LUaKk2yNmXg1uLd2R7P1k9-OVUyh8RZrdHphz0zXTc=", // The Silence Hack
+    "https://media.istockphoto.com/id/939444810/vector/blackboard-inscribed-with-scientific-formulas-and-calculations-in-physics-and-mathematics-can.jpg?s=612x612&w=0&k=20&c=IyJw3M9YSPv1mDQ7Y3LghNXs9rrB3vvrYMiBnkjWmo0=", // The Quantum Creativity Hack
+    "https://static.vecteezy.com/system/resources/thumbnails/030/470/986/small/a-group-of-emoticons-with-different-emotions-ai-generated-photo.jpg", // The Emotion Engine
+    "https://c.stocksy.com/a/oOjM00/z9/5417734.jpg", // The Paradox Hack: Solve the Unsolvable
+    "https://t4.ftcdn.net/jpg/05/61/87/97/360_F_561879769_ge3aCp4Ga8t0rWBvuss5XHDOXHVuUqwW.jpg", // The No-Internet Hack
+    "https://thumbs.dreamstime.com/b/artificial-intelligence-ai-research-robot-cyborg-development-future-people-living-digital-data-mining-machine-learning-171270756.jpg", // The Future of Work
+    "https://img.freepik.com/free-vector/augmented-reality-background-flat-style_23-2147803487.jpg", // The Sensory Augmentation Hack
+    "https://media.istockphoto.com/id/1335295270/photo/global-connection.jpg?s=612x612&w=0&k=20&c=pVIatR8XcihqKTDnISYXNWvSkpZkdeJJa3YNfk9zC6g=", // The Dreamworld Hack
+  ];
 
   const getIconForTheme = (title) => {
     const iconMapping = {
@@ -60,14 +79,24 @@ const ThemeCard = ({
         className="theme-card relative rounded-xl overflow-hidden shadow-lg h-80 group cursor-pointer border-2 border-gray-100 hover:border-[#30BFDD] transition-all duration-300"
         onClick={() => setIsOpen(true)}
       >
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white to-gray-100 opacity-90"></div>
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={backgroundImages[imageIndex || 0]}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-800/70 to-transparent opacity-80"></div>
+        </div>
 
-        <div className="absolute top-6 left-6 text-[#30BFDD]">
+        {/* Theme Icon */}
+        <div className="absolute top-6 left-6 text-white z-10 bg-[#30BFDD]/30 p-3 rounded-full backdrop-blur-sm">
           {getIconForTheme(title)}
         </div>
 
-        <div className="absolute inset-0 flex flex-col justify-end p-6">
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-[#30BFDD]">
+        {/* Content Container */}
+        <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
+          <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-md border-l-4 border-[#30BFDD]">
             <h3 className="text-xl font-bold text-gray-800 mb-2">{title}</h3>
             <p className="text-gray-600 text-sm mb-4 line-clamp-2">
               {description}
@@ -85,7 +114,8 @@ const ThemeCard = ({
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-[#30BFDD]"></div>
+        {/* Bottom Accent Bar */}
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-[#30BFDD] z-10"></div>
       </Card>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -99,6 +129,15 @@ const ThemeCard = ({
               {description}
             </DialogDescription>
           </DialogHeader>
+
+          {/* Header Image in Dialog */}
+          <div className="w-full h-48 rounded-lg overflow-hidden my-4">
+            <img
+              src={backgroundImages[imageIndex || 0]}
+              alt={title}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
           <div className="mt-4">
             <div className="mb-6">
@@ -278,6 +317,7 @@ export default function Themes() {
         },
       ],
     },
+    // Add remaining themes as they are...
     {
       title: "The Black Mirror Hack",
       description: "Dystopian Tech Turned Ethical",
@@ -755,53 +795,10 @@ export default function Themes() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {themes.map((theme, index) => (
-            <ThemeCard key={index} {...theme} />
+            <ThemeCard key={index} {...theme} imageIndex={index} />
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-// import React from "react";
-// import { Card } from "@/components/ui/card";
-// import { Calendar, Clock, AlertCircle } from "lucide-react";
-
-// export default function Themes() {
-//   return (
-//     <section id="themes" className="py-16 md:py-10 relative">
-//       <div className="container mx-auto px-6">
-//         <div className="text-center mb-16">
-//           <h2 className="text-3xl md:text-4xl font-bold mb-4">Hackathon Themes</h2>
-//           <p className="text-lg max-w-2xl mx-auto">Our exciting theme categories will be revealed soon.</p>
-//           <div className="w-24 h-1 bg-[#30BFDD] mx-auto mt-4"></div>
-//         </div>
-
-//         <Card className="max-w-3xl mx-auto overflow-hidden shadow-lg border-none bg-gradient-to-br from-gray-900 to-gray-800">
-//           <div className="p-8 md:p-12 text-center">
-//             <div className="w-16 h-16 mx-auto mb-6 bg-[#30BFDD]/20 rounded-full flex items-center justify-center">
-//               <Clock className="w-8 h-8 text-[#30BFDD]" />
-//             </div>
-//             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Themes Coming Soon</h3>
-//             <p className="text-gray-300 text-lg mb-8 max-w-xl mx-auto">
-//               We're finalizing our innovative challenge themes that will tackle real-world problems.
-//               Check back later for the official theme announcement.
-//             </p>
-
-//             <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-//               <div className="flex items-center gap-2 text-gray-300">
-//                 <Calendar className="w-5 h-5 text-[#30BFDD]" />
-//                 <span>Coming in the next update</span>
-//               </div>
-//               <div className="flex items-center gap-2 text-gray-300">
-//                 <AlertCircle className="w-5 h-5 text-[#30BFDD]" />
-//                 <span>Stay tuned for updates</span>
-//               </div>
-//             </div>
-//           </div>
-//         </Card>
-
-//       </div>
-//     </section>
-//   );
-// }
