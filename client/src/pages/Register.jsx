@@ -314,17 +314,18 @@ export default function Register() {
               <div className="flex items-center justify-center mb-6">
                 <div className="max-w-xs">
                   <h3 className="text-lg font-medium text-center mb-4">
-                    Payment QR Code
+                    Payment   
                   </h3>
-                  <div className="border rounded-lg overflow-hidden">
+                  {/* <div className="border rounded-lg overflow-hidden">
                     <img
                       src={paytmQR}
                       alt="Payment QR Code"
                       className="w-full h-auto"
                     />
-                  </div>
+                  </div> */}
                   <p className="text-sm text-center mt-2">
-                    Pay via UPI to 8617707685@pthdf
+                    Pay via UPI to{" "}
+                    <strong className="text-lg">8617707685-2@ybl</strong>
                   </p>
                 </div>
               </div>
