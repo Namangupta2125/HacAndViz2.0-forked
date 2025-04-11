@@ -23,7 +23,6 @@ import {
   Eye,
   Monitor,
 } from "lucide-react";
-import anti from "../../../attached_assets/IMG-20250411-WA0006.jpg";
 
 const ThemeCard = ({
   title,
