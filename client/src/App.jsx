@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Register from "@/pages/Register";
-import AdminDashboard from "@/pages/Admin";
 import SignupPage from "@/pages/Signup";
 import LeaderboardPage from "./pages/leaderboard";
 import JudgeLogin from "./pages/Judge_login";
@@ -18,7 +17,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/register" component={Register} />
-      <Route path="/admin" component={AdminDashboard} />
       <Route path="/signup" component={SignupPage} />
       <Route path="/judge-login" component={JudgeLogin} />
       <Route path="judge/dashboard" component={JudgeDashboard} />
