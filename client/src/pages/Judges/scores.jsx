@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { ChevronLeft, Save, AlertCircle, Lock, Home } from "lucide-react";
+import {
+  ChevronLeft,
+  Save,
+  AlertCircle,
+  Lock,
+  Home,
+  MessageSquare,
+} from "lucide-react";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -30,11 +37,11 @@ const roundCriteria = {
     { id: "theme_relevance", label: "Relevance to Theme", maxScore: 5 },
   ],
   3: [
-    { id: "data_dashboard", label: "Data Dashboard", maxScore: 10 },
+    { id: "data_dashboard", label: "Data Dashboard", maxScore: 20 },
     {
       id: "presentation_documentation",
       label: "Presentation and Documentation",
-      maxScore: 10,
+      maxScore: 20,
     },
   ],
 };
@@ -54,6 +61,7 @@ export default function JudgeScoring() {
   const [isRoundLocked, setIsRoundLocked] = useState(false);
   const [assignedRooms, setAssignedRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [previousFeedback, setPreviousFeedback] = useState([]);
 
   useEffect(() => {
     // Get round number from URL query params
@@ -129,11 +137,12 @@ export default function JudgeScoring() {
   const fetchAssignedRooms = async (judgeId, round) => {
     try {
       setLoading(true);
-      
+
       // Get rooms assigned to this judge for this round
       const { data: roomAssignments, error: roomsError } = await supabase
         .from("judge_room_assignments")
-        .select(`
+        .select(
+          `
           id,
           room_id,
           rooms:room_id (
@@ -141,7 +150,8 @@ export default function JudgeScoring() {
             room_name, 
             room_location
           )
-        `)
+        `
+        )
         .eq("judge_id", judgeId)
         .eq("round_number", round);
 
@@ -149,9 +159,9 @@ export default function JudgeScoring() {
 
       if (roomAssignments && roomAssignments.length > 0) {
         // Extract room information from the nested structure
-        const rooms = roomAssignments.map(assignment => assignment.rooms);
+        const rooms = roomAssignments.map((assignment) => assignment.rooms);
         setAssignedRooms(rooms);
-        
+
         // If only one room is assigned, auto-select it
         if (rooms.length === 1) {
           setSelectedRoom(rooms[0]);
@@ -161,7 +171,7 @@ export default function JudgeScoring() {
         setAssignedRooms([]);
         setTeams([]);
       }
-      
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching assigned rooms:", error);
@@ -262,11 +272,96 @@ export default function JudgeScoring() {
     setSuccessMessage(null);
     await fetchTeamsForRoom(room.id, roundNumber);
   };
-  
-  const handleTeamSelect = (team) => {
+
+  const fetchPreviousFeedback = async (teamId) => {
+    try {
+      const previousRounds = [];
+      const judgeId = sessionStorage.getItem("judgeId");
+
+      // For round 2, fetch round 1 feedback
+      if (roundNumber >= 2) {
+        const { data: round1Data, error: round1Error } = await supabase
+          .from("round1_scores")
+          .select("feedback, judge_id")
+          .eq("team_id", teamId);
+
+        if (!round1Error && round1Data?.length > 0) {
+          // Find feedback from this judge first
+          const judgeScores = round1Data.find(
+            (score) => score.judge_id === judgeId
+          );
+          // If this judge provided feedback in round 1, add it first
+          if (judgeScores && judgeScores.feedback) {
+            previousRounds.push({
+              round: 1,
+              feedback: judgeScores.feedback,
+              isOwnFeedback: true,
+            });
+          }
+
+          // Add other judges' feedback
+          round1Data.forEach((score) => {
+            if (score.judge_id !== judgeId && score.feedback) {
+              previousRounds.push({
+                round: 1,
+                feedback: score.feedback,
+                isOwnFeedback: false,
+              });
+            }
+          });
+        }
+      }
+
+      // For round 3, also fetch round 2 feedback
+      if (roundNumber >= 3) {
+        const { data: round2Data, error: round2Error } = await supabase
+          .from("round2_scores")
+          .select("feedback, judge_id")
+          .eq("team_id", teamId);
+
+        if (!round2Error && round2Data?.length > 0) {
+          // Find feedback from this judge first
+          const judgeScores = round2Data.find(
+            (score) => score.judge_id === judgeId
+          );
+          // If this judge provided feedback in round 2, add it first
+          if (judgeScores && judgeScores.feedback) {
+            previousRounds.push({
+              round: 2,
+              feedback: judgeScores.feedback,
+              isOwnFeedback: true,
+            });
+          }
+
+          // Add other judges' feedback
+          round2Data.forEach((score) => {
+            if (score.judge_id !== judgeId && score.feedback) {
+              previousRounds.push({
+                round: 2,
+                feedback: score.feedback,
+                isOwnFeedback: false,
+              });
+            }
+          });
+        }
+      }
+
+      setPreviousFeedback(previousRounds);
+    } catch (error) {
+      console.error("Error fetching previous feedback:", error);
+    }
+  };
+
+  const handleTeamSelect = async (team) => {
     setSelectedTeam(team);
     setError(null);
     setSuccessMessage(null);
+    setPreviousFeedback([]);
+
+    // Fetch previous rounds feedback if current round > 1
+    if (roundNumber > 1) {
+      await fetchPreviousFeedback(team.id);
+    }
 
     // If the team has already been scored, load those scores
     if (team.scored && team.scoreData) {
@@ -292,7 +387,7 @@ export default function JudgeScoring() {
   const handleScoreChange = (criterionId, value, maxScore) => {
     // Don't allow changes if team is already scored
     if (selectedTeam?.scored) return;
-    
+
     // Ensure value is between 0 and maxScore
     const score = Math.max(0, Math.min(maxScore, value));
     setScores((prev) => ({
@@ -304,7 +399,7 @@ export default function JudgeScoring() {
   const handleFeedbackChange = (e) => {
     // Don't allow changes if team is already scored
     if (selectedTeam?.scored) return;
-    
+
     setScores((prev) => ({
       ...prev,
       feedback: e.target.value,
@@ -319,7 +414,9 @@ export default function JudgeScoring() {
 
     // Don't allow submitting if team is already scored
     if (selectedTeam.scored) {
-      setError("This team has already been scored. Scores cannot be modified once submitted.");
+      setError(
+        "This team has already been scored. Scores cannot be modified once submitted."
+      );
       return;
     }
 
@@ -419,13 +516,54 @@ export default function JudgeScoring() {
               )
             }
             className={`w-full h-2 bg-gray-200 rounded-lg appearance-none ${
-              selectedTeam?.scored ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              selectedTeam?.scored
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
             }`}
             disabled={selectedTeam?.scored || isRoundLocked}
           />
           <span className="ml-4 text-lg font-medium">
             {scores[criterion.id] || 0}/{criterion.maxScore}
           </span>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPreviousFeedback = () => {
+    if (previousFeedback.length === 0) return null;
+
+    return (
+      <div className="mt-6 mb-6">
+        <h3 className="font-semibold text-lg mb-3 flex items-center">
+          <MessageSquare size={18} className="mr-2 text-indigo-500" />
+          Previous Rounds Feedback
+        </h3>
+        <div className="space-y-4">
+          {previousFeedback.map((item, index) => (
+            <div
+              key={index}
+              className={`p-4 rounded-lg ${
+                item.isOwnFeedback
+                  ? "bg-blue-50 border border-blue-100"
+                  : "bg-gray-50 border border-gray-100"
+              }`}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-medium text-sm">
+                  Round {item.round} Feedback
+                  {item.isOwnFeedback && (
+                    <span className="ml-2 text-blue-600 text-xs">
+                      (Your feedback)
+                    </span>
+                  )}
+                </h4>
+              </div>
+              <p className="text-sm text-gray-700 whitespace-pre-line">
+                {item.feedback || "No feedback provided."}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -482,7 +620,9 @@ export default function JudgeScoring() {
                   <div className="text-left">
                     <h3 className="font-medium">{room.room_name}</h3>
                     {room.room_location && (
-                      <p className="text-sm text-gray-500">{room.room_location}</p>
+                      <p className="text-sm text-gray-500">
+                        {room.room_location}
+                      </p>
                     )}
                   </div>
                 </button>
@@ -500,7 +640,9 @@ export default function JudgeScoring() {
                 <div>
                   <h2 className="font-medium">{selectedRoom.room_name}</h2>
                   {selectedRoom.room_location && (
-                    <p className="text-sm text-gray-500">{selectedRoom.room_location}</p>
+                    <p className="text-sm text-gray-500">
+                      {selectedRoom.room_location}
+                    </p>
                   )}
                 </div>
               </div>
@@ -525,7 +667,7 @@ export default function JudgeScoring() {
             <AlertCircle size={48} className="mx-auto text-yellow-500 mb-4" />
             <h2 className="text-xl font-semibold mb-2">No Rooms Assigned</h2>
             <p className="text-gray-600">
-              You have not been assigned to any rooms for Round {roundNumber}. 
+              You have not been assigned to any rooms for Round {roundNumber}.
               Please contact the administrator if you believe this is an error.
             </p>
           </div>
@@ -539,7 +681,9 @@ export default function JudgeScoring() {
               <h2 className="text-lg font-semibold mb-4">Teams</h2>
               <div className="space-y-2">
                 {teams.length === 0 ? (
-                  <p className="text-gray-500">No teams available in this room.</p>
+                  <p className="text-gray-500">
+                    No teams available in this room.
+                  </p>
                 ) : (
                   teams.map((team) => (
                     <button
@@ -585,7 +729,9 @@ export default function JudgeScoring() {
                         </div>
                         <div className="ml-3">
                           <p className="text-sm text-blue-700">
-                            This team has already been scored. Scores cannot be modified once submitted. You can view the scores below.
+                            This team has already been scored. Scores cannot be
+                            modified once submitted. You can view the scores
+                            below.
                           </p>
                         </div>
                       </div>
@@ -601,12 +747,17 @@ export default function JudgeScoring() {
                         </div>
                         <div className="ml-3">
                           <p className="text-sm text-yellow-700">
-                            This round is currently locked. Scoring is not allowed until the round is unlocked by an administrator.
+                            This round is currently locked. Scoring is not
+                            allowed until the round is unlocked by an
+                            administrator.
                           </p>
                         </div>
                       </div>
                     </div>
                   )}
+
+                  {/* Display previous rounds feedback when in round 2 or 3 */}
+                  {roundNumber > 1 && renderPreviousFeedback()}
 
                   <div className="space-y-6">
                     {/* Round-specific scoring criteria */}
@@ -614,7 +765,9 @@ export default function JudgeScoring() {
 
                     {/* Show total score for the round */}
                     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                      <h3 className="font-semibold text-lg mb-2">Total Score</h3>
+                      <h3 className="font-semibold text-lg mb-2">
+                        Total Score
+                      </h3>
                       <div className="text-2xl font-bold text-indigo-600">
                         {criteria.reduce(
                           (total, criterion) =>
