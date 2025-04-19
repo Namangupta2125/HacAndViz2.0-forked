@@ -301,11 +301,11 @@ export default function About() {
                   </div>
                   <div>
                     <h5 className="font-medium text-lg">
-                      Round 2: Technical Development
+                      Round 2: evaluation criteria
                     </h5>
                     <p className="text-gray-600">
                       <span className="font-medium">Timing: 2:30 AM to 6:30 AM (April 20)</span><br />
-                      Teams will be evaluated based on their tech stack selection and implementation, as well as the innovation demonstrated in their solutions.
+                      Technical approach, creative problem-solving, solution optimization, and relevance to the theme will be assessed.
                     </p>
                   </div>
                 </div>
