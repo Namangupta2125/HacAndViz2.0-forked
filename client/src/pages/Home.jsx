@@ -8,7 +8,6 @@ import Faq from "@/components/Faq";
 import Registration from "@/components/Registration";
 import Organizers from "@/components/Organizers";
 import Footer from "@/components/Footer";
-import RoundDetails from "@/components/Round_detail";
 
 export default function Home() {
   return (
@@ -16,7 +15,6 @@ export default function Home() {
       <Navbar />
       <Hero />
       <About />
-      <RoundDetails />
       <Themes />
       <Timeline />
       <Faq />
