@@ -39,7 +39,7 @@ export default function About() {
               What is <span className="text-[#30BFDD]">Hack and Viz 2.0</span>?
             </h3>
             <p className="text-lg mb-6">
-              Hack and Viz 2.0 is a 30-hour hackathon organized by the Datum
+              Hack and Viz 2.0 is a 24-hour hackathon organized by the Datum
               Club of GLA University. It brings together student developers,
               designers, and innovators to collaborate on projects addressing
               real-world challenges.
@@ -205,7 +205,7 @@ export default function About() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  30 Hours
+                  24 Hours
                 </span>
               </div>
               <h3 className="text-2xl font-bold mb-4">
@@ -214,7 +214,7 @@ export default function About() {
               <p className="text-lg mb-6">
                 Our flagship competition where teams of 3-4 participants work on
                 innovative solutions to real-world problems. Develop your
-                project from concept to prototype in just 30 hours!
+                project from concept to prototype in just 24 hours!
               </p>
 
               <div className="space-y-5 mb-8">
@@ -271,7 +271,7 @@ export default function About() {
                   <div>
                     <h4 className="font-medium">Resources Provided</h4>
                     <p className="text-gray-600">
-                      Workspace, high-speed internet, beverages, and
+                      Workspace, high-speed internet, meals, beverages, and
                       mentorship
                     </p>
                   </div>
@@ -286,12 +286,11 @@ export default function About() {
                   </div>
                   <div>
                     <h5 className="font-medium text-lg">
-                      Initial Round: 30-Hour Coding Challenge
+                      Round 1: Initial Assessment
                     </h5>
                     <p className="text-gray-600">
-                      Teams will have 30 hours to develop a functional prototype
-                      based on the chosen problem statement. Participants will
-                      have access to mentors throughout this period.
+                      <span className="font-medium">Timing: 3:00 PM to 6:30 PM (April 19)</span><br />
+                      Teams will be evaluated on reason of theme selection, problem statement chosen, relevance to theme, and their tentative solution approach.
                     </p>
                   </div>
                 </div>
@@ -302,11 +301,11 @@ export default function About() {
                   </div>
                   <div>
                     <h5 className="font-medium text-lg">
-                      Project Presentation
+                      Round 2: Technical Development
                     </h5>
                     <p className="text-gray-600">
-                      Teams will pitch their solutions to a panel of judges
-                      including industry experts and faculty members.{" "}
+                      <span className="font-medium">Timing: 2:30 AM to 6:30 AM (April 20)</span><br />
+                      Teams will be evaluated based on their tech stack selection and implementation, as well as the innovation demonstrated in their solutions.
                     </p>
                   </div>
                 </div>
@@ -317,12 +316,11 @@ export default function About() {
                   </div>
                   <div>
                     <h5 className="font-medium text-lg">
-                      Final Round: Data Visualization Dashboard
+                      Round 3: Dashboard Presentation
                     </h5>
                     <p className="text-gray-600">
-                      Finalists will create an interactive data visualization
-                      dashboard using Power BI, Tableau, or similar tools to
-                      present insights from their project data.{" "}
+                      <span className="font-medium">Timing: 11:00 AM to 4:00 PM (April 20)</span><br />
+                      The final evaluation will be based solely on teams' data visualization dashboard presentations, showcasing insights from their project data.
                     </p>
                   </div>
                 </div>
@@ -343,7 +341,7 @@ export default function About() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
                   <p className="text-white p-4 font-medium">
-                    Collaborative workspace setup for 30-hour coding
+                    Collaborative workspace setup for 24-hour coding
                   </p>
                 </div>
               </div>
