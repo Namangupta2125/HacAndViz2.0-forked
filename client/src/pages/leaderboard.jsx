@@ -53,26 +53,46 @@ export default function LeaderboardPage() {
     try {
       // Determine the highest active round to use for ordering
       const highestActiveRound = Math.max(...activeRounds);
-      let query = supabase.from('team_leaderboard').select('team_id, team_name, team_size');
+      let query = supabase.from('team_leaderboard').select('team_id, team_name, team_size, round1_total, round2_total, round3_total, grand_total');
       
       // Order by the appropriate score based on highest active round
       if (highestActiveRound === 1) {
         query = query.order('round1_total', { ascending: false });
       } else if (highestActiveRound === 2) {
-        // For round 2, order by combined score of rounds 1+2
-        query = query.order('round1_total', { ascending: false }).order('round2_total', { ascending: false });
+        // For round 2, create a combined score for proper ordering
+        // We need to calculate round1_total + round2_total for ordering
+        query = query.order('round1_total', { ascending: false })
+                    .order('round2_total', { ascending: false });
+        
+        // This method ensures we're sorting based on both round scores,
+        // but we need to manually sort the results after fetching
       } else if (highestActiveRound === 3) {
         query = query.order('grand_total', { ascending: false });
       }
       
       // Limit to top 10 teams for rounds 1 and 2, top 3 for round 3
       const limit = highestActiveRound === 3 ? 3 : 10;
-      query = query.limit(limit);
+      query = query.limit(100); // Fetch more than needed for manual sorting
       
       const { data, error } = await query;
       
       if (error) throw error;
-      setTeams(data || []);
+      
+      let sortedData = data || [];
+      
+      // For round 2, manually sort by combined score of round1 + round2
+      if (highestActiveRound === 2) {
+        sortedData.sort((a, b) => {
+          const aCombinedScore = (a.round1_total || 0) + (a.round2_total || 0);
+          const bCombinedScore = (b.round1_total || 0) + (b.round2_total || 0);
+          return bCombinedScore - aCombinedScore; // Descending order
+        });
+      }
+      
+      // Apply limit after manual sorting if needed
+      sortedData = sortedData.slice(0, limit);
+      
+      setTeams(sortedData);
     } catch (err) {
       console.error("Error fetching teams:", err);
       setError("Unable to load leaderboard data");
@@ -143,6 +163,19 @@ export default function LeaderboardPage() {
   const getPositionLabel = (index) => {
     const positions = ["1st", "2nd", "3rd"];
     return positions[index] || `${index + 1}th`;
+  };
+
+  // Calculate combined score for display
+  const getCombinedScore = (team) => {
+    const highestActiveRound = Math.max(...activeRounds);
+    
+    if (highestActiveRound === 1) {
+      return team.round1_total || 0;
+    } else if (highestActiveRound === 2) {
+      return (team.round1_total || 0) + (team.round2_total || 0);
+    } else {
+      return team.grand_total || 0;
+    }
   };
 
   return (
@@ -227,6 +260,7 @@ export default function LeaderboardPage() {
                           <h3 className="text-xl font-bold mb-1">{getPositionLabel(index)} Place</h3>
                           <p className="text-2xl font-extrabold text-gray-800 mb-2">{team.team_name}</p>
                           <p className="text-sm text-gray-500">Team Size: {team.team_size}</p>
+                          <p className="text-lg font-bold mt-3">Score: {getCombinedScore(team)}</p>
                         </div>
                       </div>
                     </div>
@@ -257,6 +291,11 @@ export default function LeaderboardPage() {
                             {team.team_name}
                           </p>
                         </div>
+                        {/* <div className="ml-4">
+                          <span className="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Score: {getCombinedScore(team)}
+                          </span>
+                        </div> */}
                       </div>
                     </li>
                   ))}
